@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View All Products</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="admin_home.html" class="brand-logo">Amazon<span>Products</span></a>
+    <nav class="nav-links">
+      <a href="admin_home.html">Home</a>
+      <a href="product_management.html">Product Management</a>
+      <a href="add_products.html">+ Add Product</a>
+      <a href="view_all_products.html" class="active">Showcase</a>
+    </nav>
+  </header>
+
+  <main class="main-wrapper">
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search products by title...">
+      <button type="button" class="btn-primary" onclick="searchProducts()">Search</button>
+      <button type="button" class="btn-secondary" onclick="loadCards()">Reset</button>
+    </div>
+
+    <section class="card-box">
+      <h3>Catalogue Showcase</h3>
+      <div id="productCardGrid" class="product-grid">
+        <!-- Cards loaded dynamically from Spring Boot /all -->
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:8083";
+    let productList = [];
+
+    async function loadCards() {
+      try {
+        const response = await fetch(`${API_BASE}/all`);
+        productList = await response.json();
+        renderCards(productList);
+      } catch (err) {
+        console.error("Error loading products:", err);
+      }
+    }
+
+    function renderCards(items) {
+      const grid = document.getElementById("productCardGrid");
+      grid.innerHTML = "";
+
+      if (!items || items.length === 0) {
+        grid.innerHTML = `<p style="color: #555; padding: 20px;">No products found.</p>`;
+        return;
+      }
+
+      items.forEach(p => {
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="${p.photoUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'">
+          <h4>${p.name}</h4>
+          <p class="price">₹${p.price}</p>
+          <p class="desc">${p.description}</p>
+          <div class="card-actions">
+            <button class="btn-danger" onclick="deleteAndRefresh(${p.id})">Delete</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function searchProducts() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = productList.filter(p => p.name.toLowerCase().includes(query));
+      renderCards(filtered);
+    }
+
+    async function deleteAndRefresh(id) {
+      if (!confirm(`Delete product ID ${id}?`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/delete/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          loadCards();
+        } else {
+          alert("Failed to delete.");
+        }
+      } catch (err) {
+        alert("Server unreachable.");
+      }
+    }
+
+    loadCards();
+  </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.appplication.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,34 +21,55 @@ public class ProductServiceImplementation implements ProductService
 	
 	 
 
-	@Override
+	 
 	public String addProduct(Products product) {
 		productRepository.save(product);
 		return "Product Added";
 	}
 
-	@Override
+	 
 	public Products viewProduct(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		  return productRepository.findById(id).orElse(null);
+		  
 	}
 
-	@Override
-	public String updateProduct(Products id) {
-		// TODO Auto-generated method stub
-		return null;
+	 
+	 
+	public String updateProduct(Long id, Products retrieveProducts) {
+	    Optional<Products> optionalProduct = productRepository.findById(id);
+	    
+	    if (optionalProduct.isPresent()) {
+	        Products existingProduct = optionalProduct.get(); // 1. Unwrap the entity
+	        
+	        // 2. Update fields (do NOT alter existingProduct.setId)
+	        existingProduct.setName(retrieveProducts.getName());
+	        existingProduct.setPrice(retrieveProducts.getPrice());
+	        existingProduct.setDescription(retrieveProducts.getDescription());
+	        existingProduct.setPhotoUrl(retrieveProducts.getPhotoUrl());
+	        
+	        // 3. Save the unwrapped entity
+	        productRepository.save(existingProduct);
+	        return "Product updated successfully";
+	    }
+	    
+	    return "Product not found with id: " + id;
+	}
+	
+
+	 
+	public boolean deleteProduct(Long id) {
+		  if (productRepository.existsById(id)) {
+			  productRepository.deleteById(id);
+			  return true;
+		  }
+		return false;
 	}
 
-	@Override
-	public String deleteProduct(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+ 
 	@Override
 	public List<Products> viewAllProducts() {
-		// TODO Auto-generated method stub
-		return null;
+	return	productRepository.findAll();
 	}
+	
 }
 
