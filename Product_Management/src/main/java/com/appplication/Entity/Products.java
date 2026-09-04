@@ -15,12 +15,12 @@ public class Products {
 	Long id;
 	@Column(nullable=false, unique=true)
 	String name;
-	@Column(nullable=false, unique=true)
+	@Column(nullable=false)
 	int price;
-	@Column(nullable=false, unique=true)
+	@Column(nullable=false)
 	String description;
-	@Column(nullable=false, unique=true)
-	String PhotoUrl;
+	@Column(nullable=false)
+	String photoUrl;
 	public Products() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -29,7 +29,7 @@ public class Products {
 		this.name = name;
 		this.price = price;
 		this.description = description;
-		this.PhotoUrl = photoUrl;
+		this.photoUrl = photoUrl;
 	}
 	public Long getId() {
 		return id;
@@ -56,15 +56,15 @@ public class Products {
 		this.description = description;
 	}
 	public String getPhotoUrl() {
-		return PhotoUrl;
+		return photoUrl;
 	}
 	public void setPhotoUrl(String photoUrl) {
-		PhotoUrl = photoUrl;
+		this.photoUrl = photoUrl;
 	}
 	@Override
 	public String toString() {
 		return "Products [id=" + id + ", name=" + name + ", price=" + price + ", description=" + description
-				+ ", PhotoUrl=" + PhotoUrl + "]";
+				+ ", PhotoUrl=" + photoUrl + "]";
 	}
 	
 	
