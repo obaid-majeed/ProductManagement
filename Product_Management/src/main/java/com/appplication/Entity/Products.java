@@ -17,7 +17,7 @@ public class Products {
 	String name;
 	@Column(nullable=false)
 	int price;
-	@Column(nullable=false)
+	@Column(nullable=false, length=255)
 	String description;
 	@Column(nullable=false)
 	String photoUrl;

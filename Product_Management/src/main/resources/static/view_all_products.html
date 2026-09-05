@@ -1,98 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>View All Products</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View All Products</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fafc;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            background: #2563eb;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 35px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            padding: 12px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        table, th, td {
+            border: 1px solid #cbd5e1;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #e2e8f0;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            display: block;
+        }
+
+        .url-cell {
+            word-break: break-word;
+            max-width: 250px;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>View All Products</h1>
+        <a class="btn-link" href="product_management.html">Back</a>
+    </header>
 
-  <header class="navbar">
-    <a href="admin_home.html" class="brand-logo">Amazon<span>Products</span></a>
-    <nav class="nav-links">
-      <a href="admin_home.html">Home</a>
-      <a href="product_management.html">Product Management</a>
-      <a href="add_products.html">+ Add Product</a>
-      <a href="view_all_products.html" class="active">Showcase</a>
-    </nav>
-  </header>
+    <div class="container">
+        <button onclick="viewAllProducts()">Load All Products</button>
 
-  <main class="main-wrapper">
-    <!-- Search Bar -->
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search products by title...">
-      <button type="button" class="btn-primary" onclick="searchProducts()">Search</button>
-      <button type="button" class="btn-secondary" onclick="loadCards()">Reset</button>
+        <div id="messageArea"></div>
+        <div id="resultArea"></div>
     </div>
 
-    <section class="card-box">
-      <h3>Catalogue Showcase</h3>
-      <div id="productCardGrid" class="product-grid">
-        <!-- Cards loaded dynamically from Spring Boot /all -->
-      </div>
-    </section>
-  </main>
+    <script>
+        async function viewAllProducts() {
+            const messageArea = document.getElementById("messageArea");
+            const resultArea = document.getElementById("resultArea");
 
-  <script>
-    const API_BASE = "http://localhost:8083";
-    let productList = [];
+            try {
+                const response = await fetch("/viewAllProducts");
 
-    async function loadCards() {
-      try {
-        const response = await fetch(`${API_BASE}/all`);
-        productList = await response.json();
-        renderCards(productList);
-      } catch (err) {
-        console.error("Error loading products:", err);
-      }
-    }
+                if (!response.ok) {
+                    messageArea.innerHTML =
+                        `<div class="message">Unable to fetch products.</div>`;
+                    resultArea.innerHTML = "";
+                    return;
+                }
 
-    function renderCards(items) {
-      const grid = document.getElementById("productCardGrid");
-      grid.innerHTML = "";
+                const products = await response.json();
 
-      if (!items || items.length === 0) {
-        grid.innerHTML = `<p style="color: #555; padding: 20px;">No products found.</p>`;
-        return;
-      }
+                messageArea.innerHTML =
+                    `<div class="message">All products fetched successfully.</div>`;
 
-      items.forEach(p => {
-        const card = document.createElement("article");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="${p.photoUrl}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'">
-          <h4>${p.name}</h4>
-          <p class="price">₹${p.price}</p>
-          <p class="desc">${p.description}</p>
-          <div class="card-actions">
-            <button class="btn-danger" onclick="deleteAndRefresh(${p.id})">Delete</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
+                if (!products || products.length === 0) {
+                    resultArea.innerHTML =
+                        `<div class="empty-message">No products found.</div>`;
+                    return;
+                }
 
-    function searchProducts() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      const filtered = productList.filter(p => p.name.toLowerCase().includes(query));
-      renderCards(filtered);
-    }
+                let rows = "";
 
-    async function deleteAndRefresh(id) {
-      if (!confirm(`Delete product ID ${id}?`)) return;
-      try {
-        const res = await fetch(`${API_BASE}/delete/${id}`, { method: "DELETE" });
-        if (res.ok) {
-          loadCards();
-        } else {
-          alert("Failed to delete.");
+                products.forEach(product => {
+                    rows += `
+                        <tr>
+                            <td>${product.id ?? ""}</td>
+                            <td>${product.name ?? ""}</td>
+                            <td>${product.description ?? ""}</td>
+                            <td>${product.price ?? ""}</td>
+                            
+                            <td>
+                                <img
+                                    class="product-image"
+                                    src="${product.photoUrl ?? ""}"
+                                    alt="Product Image"
+                                    onerror="this.src='https://via.placeholder.com/100?text=No+Image'"
+                                />
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                resultArea.innerHTML = `
+                    <div class="table-wrapper">
+                        <table>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Product Price</th>
+                                <th>Product Preview</th>
+                            </tr>
+                            ${rows}
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                messageArea.innerHTML =
+                    `<div class="message">Something went wrong while fetching products.</div>`;
+                resultArea.innerHTML = "";
+                console.error(error);
+            }
         }
-      } catch (err) {
-        alert("Server unreachable.");
-      }
-    }
-
-    loadCards();
-  </script>
+    </script>
 </body>
 </html>

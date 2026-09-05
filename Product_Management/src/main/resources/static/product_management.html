@@ -1,197 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Product Management</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Management</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #2563eb;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #475569;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .card a {
+            text-decoration: none;
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .card a:hover {
+            background: #1d4ed8;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Product Management</h1>
+        <a class="back-btn" href="admin_home.html">Back to Home</a>
+    </header>
 
-  <header class="navbar">
-    <a href="admin_home.html" class="brand-logo">Admin<span>Portal</span></a>
-    <nav class="nav-links">
-      <a href="admin_home.html">Home</a>
-      <a href="product_management.html" class="active">Product Management</a>
-      <a href="add_products.html">+ Add Product</a>
-      <a href="view_all_products.html">Showcase</a>
-    </nav>
-  </header>
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <h2>Add Product</h2>
+                <p>Create and save a new product into the database.</p>
+                <a href="add_product.html">Open</a>
+            </div>
 
-  <main class="main-wrapper">
+            <div class="card">
+                <h2>Update Product</h2>
+                <p>Modify the details of an existing product.</p>
+                <a href="update_product.html">Open</a>
+            </div>
 
-    <!-- Update Section -->
-    <section class="card-box">
-      <h3>Update Product Details</h3>
-      <form id="updateForm">
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <div class="form-group" style="flex: 1; min-width: 120px;">
-            <label for="updateId">Target ID (Required):</label>
-            <input type="number" id="updateId" placeholder="e.g. 1" required>
-          </div>
-          <div class="form-group" style="flex: 2; min-width: 200px;">
-            <label for="updateName">Product Name:</label>
-            <input type="text" id="updateName" placeholder="Updated name" required>
-          </div>
-          <div class="form-group" style="flex: 1; min-width: 140px;">
-            <label for="updatePrice">Price (₹):</label>
-            <input type="number" id="updatePrice" placeholder="Updated price" required>
-          </div>
+            <div class="card">
+                <h2>Delete Product</h2>
+                <p>Delete a product using its product ID.</p>
+                <a href="delete_product.html">Open</a>
+            </div>
+
+            <div class="card">
+                <h2>Search Product</h2>
+                <p>View a single product by entering product ID.</p>
+                <a href="view_product.html">Open</a>
+            </div>
+
+            <div class="card">
+                <h2>View All Products</h2>
+                <p>Fetch and display all products from database.</p>
+                <a href="view_all_products.html">Open</a>
+            </div>
         </div>
-
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <div class="form-group" style="flex: 2; min-width: 200px;">
-            <label for="updatePhotoUrl">Photo URL:</label>
-            <input type="text" id="updatePhotoUrl" placeholder="Image URL" required>
-          </div>
-          <div class="form-group" style="flex: 3; min-width: 250px;">
-            <label for="updateDescription">Description:</label>
-            <input type="text" id="updateDescription" placeholder="Updated description" required>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-primary">Apply Update</button>
-      </form>
-    </section>
-
-    <!-- Master Inventory Table -->
-    <section class="card-box">
-      <h3>Inventory Master Table</h3>
-      
-      <div class="search-container">
-        <input type="text" id="filterInput" placeholder="Filter by product name...">
-        <button type="button" class="btn-secondary" onclick="loadInventory()">Refresh Table</button>
-      </div>
-
-      <table class="product-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="inventoryTableBody">
-          <!-- Populated from GET http://localhost:8083/all -->
-        </tbody>
-      </table>
-    </section>
-
-  </main>
-
-  <script>
-    const API_BASE = "http://localhost:8083";
-    let inventory = [];
-
-    // Fetch and populate table
-    async function loadInventory() {
-      try {
-        const response = await fetch(`${API_BASE}/all`);
-        inventory = await response.json();
-        renderTable(inventory);
-      } catch (err) {
-        console.error("Error loading products:", err);
-      }
-    }
-
-    function renderTable(items) {
-      const tbody = document.getElementById("inventoryTableBody");
-      tbody.innerHTML = "";
-
-      if (!items || items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #555;">No products in database.</td></tr>`;
-        return;
-      }
-
-      items.forEach(p => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${p.id}</td>
-          <td><img src="${p.photoUrl}" class="table-img" onerror="this.src='https://via.placeholder.com/45?text=NA'"></td>
-          <td>${p.name}</td>
-          <td>₹${p.price}</td>
-          <td>${p.description}</td>
-          <td>
-            <button class="btn-edit" onclick="populateUpdateForm(${p.id})">Edit</button>
-            <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    // Populate top update form when clicking Edit on a table row
-    function populateUpdateForm(id) {
-      const item = inventory.find(p => p.id === id);
-      if (item) {
-        document.getElementById("updateId").value = item.id;
-        document.getElementById("updateName").value = item.name;
-        document.getElementById("updatePrice").value = item.price;
-        document.getElementById("updatePhotoUrl").value = item.photoUrl;
-        document.getElementById("updateDescription").value = item.description;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    // Send PUT request to Spring Boot: /update/{id}
-    document.getElementById("updateForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const id = document.getElementById("updateId").value;
-      const payload = {
-        name: document.getElementById("updateName").value,
-        price: parseInt(document.getElementById("updatePrice").value, 10),
-        photoUrl: document.getElementById("updatePhotoUrl").value,
-        description: document.getElementById("updateDescription").value
-      };
-
-      try {
-        const response = await fetch(`${API_BASE}/update/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (response.ok) {
-          alert("Product updated successfully!");
-          document.getElementById("updateForm").reset();
-          loadInventory();
-        } else {
-          alert("Failed to update product.");
-        }
-      } catch (err) {
-        alert("Server unreachable. Check if Spring Boot is running.");
-      }
-    });
-
-    // Send DELETE request to Spring Boot: /delete/{id}
-    async function deleteProduct(id) {
-      if (!confirm(`Are you sure you want to delete Product ID: ${id}?`)) return;
-
-      try {
-        const response = await fetch(`${API_BASE}/delete/${id}`, {
-          method: "DELETE"
-        });
-        if (response.ok) {
-          alert("Product deleted!");
-          loadInventory();
-        } else {
-          alert("Failed to delete product.");
-        }
-      } catch (err) {
-        alert("Server unreachable.");
-      }
-    }
-
-    // Local table search
-    document.getElementById("filterInput").addEventListener("keyup", (e) => {
-      const query = e.target.value.toLowerCase();
-      const filtered = inventory.filter(p => p.name.toLowerCase().includes(query));
-      renderTable(filtered);
-    });
-
-    // Run on page load
-    loadInventory();
-  </script>
+    </div>
 </body>
 </html>

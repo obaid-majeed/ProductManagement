@@ -1,9 +1,11 @@
 package com.appplication.Controller;
  
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.appplication.Entity.Products;
 import com.appplication.Service.ProductServiceImplementation;
-
+@CrossOrigin(origins = "*")
 @RestController
 public class ProductController {
          
@@ -26,8 +28,8 @@ public class ProductController {
 		this.productServiceImplementation = productServiceImplementation;
 	}
 	
-	@PostMapping("/create")
-	public ResponseEntity<?> createdProduct(@RequestBody Products product) {
+	@PostMapping("/addProduct")
+	public ResponseEntity<?> addProduct(@RequestBody Products product) {
 		try {
 			String saveProducts = productServiceImplementation.addProduct(product);
 		return	ResponseEntity.ok(Map.of("message", "producted added", "Product", saveProducts));
@@ -38,26 +40,30 @@ public class ProductController {
 		 
 	}
 	
-	@GetMapping("/view/{id}")
-	public Products viewProducts(@PathVariable Long id) {
+	@GetMapping("/viewProduct/{id}")
+	public Products viewProduct(@PathVariable Long id) {
 		return productServiceImplementation.viewProduct(id);
 	}
 	
 	 
 	
-	@PutMapping("/update")
-	public String updated(@PathVariable Long id, @RequestBody Products retrieveProducts) {
+	@PutMapping("/updateProduct")
+	public String updateProduct(@PathVariable Long id, @RequestBody Products retrieveProducts) {
 		return  productServiceImplementation.updateProduct(id,retrieveProducts);
 	    
 	}
 	
-	@DeleteMapping("/delete/{id}")
-	public String removeProduct(@PathVariable Long id) {
+	@DeleteMapping("/deleteProduct/{id}")
+	public String deleteProduct(@PathVariable Long id) {
 		productServiceImplementation.deleteProduct(id);
 		return "DELETED successfully";
 	}
 	
-	
+	@GetMapping("/viewAllProducts")
+	public List<Products> viewAllProducts() {
+		 return  productServiceImplementation.viewAllProducts();
+		 	 
+		}
 	
 }
 
